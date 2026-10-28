@@ -20,7 +20,12 @@
   * **Construcción y Compilación:** Uso de la herramienta CMake y Make para la generación automatizada del ejecutable del juego dentro del directorio `build/`, manteniendo el código fuente aislado. Creación del archivo oculto `.gitignore` para bloquear la subida de binarios.
   * **Programación Orientada a Objetos (C++):** Modificación de las clases `Esfera` y `Raqueta`. Implementación de ecuaciones matemáticas básicas para actualizar las coordenadas de posición de los objetos en pantalla vinculándolas a la entrada del teclado (teclas w/s y o/l).
 
----
+- ✅ **Práctica 2: Comunicación entre Procesos mediante Tuberías Nombradas (FIFO)**
+  * **Inter-Process Communication (IPC):** Implementación de comunicación unidireccional en tiempo real entre el ejecutable principal (`tenis`) y un proceso independiente de registro (`logger`) utilizando las llamadas al sistema POSIX (`mkfifo`, `open`, `write`, `read`, `close`, `unlink`).
+  * **Proceso Receptor (`logger`):** Creación y gestión del archivo de tubería en `/tmp/tuberia_tenis`, lectura en bucle bloqueante de mensajes entrantes y limpieza del sistema de ficheros.
+  * **Proceso Emisor (`tenis`):** Modificación de la clase `CMundo` para abrir la tubería en modo escritura y transmitir los eventos de anotación y victoria de los jugadores al ser detectados en el bucle de refresco `OnTimer()`.
+  * **Estructuración en CMake:** Actualización de `CMakeLists.txt` mediante la instrucción `ADD_EXECUTABLE` para generar de forma simultánea ambos binarios en la carpeta `build/`.
+  * **Flujo Git Avanzado:** Desarrollo en la rama secundaria `practica2`, fusión (*merge*) sin conflictos hacia `master` y etiquetado formal del hito de entrega mediante la etiqueta `v2.0`.
 
 ## 📖 Descripción (Repositorio Original)
 
