@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
+#include <fcntl.h>
+#include <unistd.h>
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -21,7 +22,9 @@ CMundo::CMundo()
 
 CMundo::~CMundo()
 {
-
+        if (fd>=0){
+          close(fd);
+        }
 }
 
 void CMundo::InitGL()
@@ -135,6 +138,11 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=2+2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=2+2*rand()/(float)RAND_MAX;
 		puntos2++;
+		if (fd >=0){
+		char buffer[1024];
+		sprintf(buffer,"Jugador 2 marca 1 punto, lleva un total de %d puntos.\n", puntos2);
+                write(fd, buffer, strlen(buffer));
+		}
 	}
 
 	if(fondo_dcho.Rebota(esfera))
@@ -144,6 +152,37 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=-2-2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=-2-2*rand()/(float)RAND_MAX;
 		puntos1++;
+		if (fd >= 0) {
+                 char buffer[1024];
+                 sprintf(buffer, "Jugador 1 marca 1 punto, lleva un total de %d puntos.\n", puntos1);
+                 write(fd, buffer, strlen(buffer));
+            }
+	}
+	if (puntos1 == 3){
+	 if (fd >= 0){
+	  char buffer[1024];
+	  sprintf(buffer,"Jugador 1 ha ganado la partida!\n");
+	  write(fd,buffer,strlen(buffer));
+	  puntos1 = 0;
+          puntos2 = 0;
+          esfera.centro.x = 0;
+          esfera.centro.y = 0;
+          esfera.velocidad.x = 0;
+          esfera.velocidad.y = 0;
+	  }
+	}
+	else if (puntos2 == 3){
+	 if(fd>=0){
+	  char buffer[1024];
+	  sprintf(buffer,"Jugador 2 ha ganado la partida!\n");
+	  write(fd,buffer,strlen(buffer));
+	  puntos1 = 0;
+          puntos2 = 0;
+          esfera.centro.x = 0;
+          esfera.centro.y = 0;
+          esfera.velocidad.x = 0;
+          esfera.velocidad.y = 0;
+	 }
 	}
 
 }
@@ -192,4 +231,9 @@ void CMundo::Init()
 	jugador2.g=0;
 	jugador2.x1=6;jugador2.y1=-1;
 	jugador2.x2=6;jugador2.y2=1;
+	
+	fd = open("/tmp/tuberia_tenis", O_WRONLY);
+        if (fd < 0) {
+        perror("Error al abrir la tubería FIFO en tenis");
+        }
 }
