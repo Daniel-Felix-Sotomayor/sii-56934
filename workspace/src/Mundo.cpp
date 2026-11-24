@@ -11,6 +11,7 @@
 #include <math.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/mman.h>
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -131,6 +132,15 @@ void CMundo::OnTimer(int value)
 
 	jugador1.Rebota(esfera);
 	jugador2.Rebota(esfera);
+	
+	if (dat	!= NULL){
+	dat -> esfera = esfera;	
+	dat -> raqueta1 = jugador1;
+	
+	if (dat -> accion ==1) OnKeyboardDown('w',0,0);
+	else if (dat -> accion ==-1) OnKeyboardDown('s',0,0);
+	}
+	
 	if(fondo_izq.Rebota(esfera))
 	{
 		esfera.centro.x=0;
@@ -235,5 +245,14 @@ void CMundo::Init()
 	fd = open("/tmp/tuberia_tenis", O_WRONLY);
         if (fd < 0) {
         perror("Error al abrir la tubería FIFO en tenis");
+        }
+        fd_mem = open ("/tmp/memoria_tenis",O_CREAT|O_TRUNC|O_RDWR,0666);
+        if (fd_mem >= 0){
+          ftruncate (fd_mem,sizeof(DatosMemCompartida));
+          dat = (DatosMemCompartida*)mmap(NULL,sizeof(DatosMemCompartida),PROT_READ|PROT_WRITE,MAP_SHARED,fd_mem,0);
+          close(fd_mem);
+        }
+        else {
+        perror("Error al abrir");
         }
 }

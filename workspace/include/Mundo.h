@@ -14,10 +14,13 @@
 
 #include "Esfera.h"
 #include "Raqueta.h"
+#include "DatosMemCompartida.h"
 
 class CMundo  
 {
         int fd;
+        int fd_mem;
+        DatosMemCompartida* dat;
 
 public:
 	void Init();
